@@ -6,7 +6,7 @@ include "Geometry/CaloEventSetup/data/CaloGeometry.cfi"
 # are not stored in the event!
 include "RecoTracker/TrackProducer/data/CTFFinalFitWithMaterial.cff"
 
-include "RecoParticleFlow/PFProducer/data/particleFlow.cfi"
+include "RecoParticleFlow/PFBlockProducer/data/particleFlowBlock.cfi"
 
 # jet reconstruction --------------------------------------------------
 
