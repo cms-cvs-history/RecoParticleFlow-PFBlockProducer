@@ -6,4 +6,4 @@
 # are not stored in the event!
 include "RecoTracker/TrackProducer/data/CTFFinalFitWithMaterial.cff"
 
-include "RecoParticleFlow/PFBlockProducer/data/pfTrack.cfi"
+include "RecoParticleFlow/PFBlockProducer/data/particleFlowTrack.cfi"
