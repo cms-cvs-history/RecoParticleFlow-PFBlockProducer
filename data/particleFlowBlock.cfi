@@ -1,33 +1,11 @@
 
 module particleFlowBlock = PFBlockProducer {
 
-    # necessary to access true particles 
-    include "FastSimulation/Event/data/NoVertexGenerator.cfi"
-    PSet ParticleFilter = {
-	# Particles with |eta| > etaMax (momentum direction at primary vertex) 
-	# are not simulated 
-        double etaMax = 5.0
-	# Charged particles with pT < pTMin (GeV/c) are not simulated
-        double pTMin =  0.
-	# Particles with energy smaller than EMin (GeV) are not simulated
-        double EMin = 0.
-    }
-    # replace ParticleFilter.pTMin = 0.5
-
-    # flags 
-    untracked bool process_RecTracks = true
-    untracked bool process_Particles = true
-    untracked bool do_ParticleFlow = true
-
-    # Tracking parameters
-    string Fitter      = "KFFittingSmoother"   
-    string Propagator  = "PropagatorWithMaterial" 
-    string TTRHBuilder = "WithTrackAngle"
 
     # input collections ----------------------------------------
 
     # module label to find input rec tracks 
-    untracked string RecTrackModuleLabel = "ckfTrackCandidates"
+    untracked string RecTrackModuleLabel = "particleFlowTrack"
 
     # module label to find input PFClusters
     untracked string PFClusterModuleLabel = "particleFlowCluster"
@@ -41,11 +19,7 @@ module particleFlowBlock = PFBlockProducer {
     # instance name to find ecal PFClusters
     untracked string PFClusterPSInstanceName = "PS"
     
-
-    # module label to find input sim tracks and sim vertices
-    untracked string SimModuleLabel            = "g4SimHits"
-
-    # particle flow parameters ---------------------------------
+   # particle flow parameters ---------------------------------
 
     # reconstruction method, see PFAlgo/src/PFBlock.cc 
     # int32   pf_recon_method = 3
@@ -64,13 +38,5 @@ module particleFlowBlock = PFBlockProducer {
     double  pf_chi2_HCAL_Track = 50
     double  pf_chi2_PS_Track   = 0
     
-    # number of sigma for creating neutral particles
-    # double  pf_nsigma_neutral = 3
-
-    # ECAL calibration parameters. 
-    # E_calib =  pf_ECAL_calib_p0 + E_raw * pf_ECAL_calib_p1
-    # include "RecoParticleFlow/PFClusterTools/data/CalibrationParametersECAL.cff"
-    #double  pf_ECAL_calib_p0 = 0
-    #double  pf_ECAL_calib_p1 = 1  
 }
 
