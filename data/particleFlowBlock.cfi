@@ -5,7 +5,7 @@ module particleFlowBlock = PFBlockProducer {
     # input collections ----------------------------------------
 
     # module label to find input rec tracks 
-    untracked string RecTrackModuleLabel = "particleFlowTrack"
+    untracked string RecTrackModuleLabel = "elecPreId"
 
     # module label to find input PFClusters
     untracked string PFClusterModuleLabel = "particleFlowCluster"

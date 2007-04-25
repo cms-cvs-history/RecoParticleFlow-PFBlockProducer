@@ -5,5 +5,6 @@
 # note that tracking is redone since we need updated hits and they 
 # are not stored in the event!
 include "RecoTracker/TrackProducer/data/CTFFinalFitWithMaterial.cff"
+include "SimGeneral/HepPDTESSource/data/pdt.cfi"
 
-include "RecoParticleFlow/PFBlockProducer/data/particleFlowTrack.cfi"
+include "RecoParticleFlow/PFBlockProducer/data/particleFlowSimParticle.cfi"
