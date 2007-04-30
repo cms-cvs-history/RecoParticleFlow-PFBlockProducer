@@ -1,4 +1,4 @@
-#include "RecoParticleFlow/PFBlockProducer/interface/PFTrackProducer.h"
+#include "RecoParticleFlow/PFBlockProducer/interface/PFSimParticleProducer.h"
 
 #include "RecoParticleFlow/PFClusterTools/interface/PFEnergyCalibration.h"
 #include "RecoParticleFlow/PFClusterTools/interface/PFEnergyResolution.h"
@@ -53,7 +53,7 @@
 using namespace std;
 using namespace edm;
 
-PFTrackProducer::PFTrackProducer(const edm::ParameterSet& iConfig) :
+PFSimParticleProducer::PFSimParticleProducer(const edm::ParameterSet& iConfig) :
   trackAlgo_(iConfig) {
 
   
@@ -79,51 +79,56 @@ PFTrackProducer::PFTrackProducer(const edm::ParameterSet& iConfig) :
 
   // register products
   produces<reco::PFSimParticleCollection>();
-  produces<reco::PFRecTrackCollection>();
+
+  if(processRecTracks_ ) {
+    
+    produces<reco::PFRecTrackCollection>();
+    
+    
+    // initialize track reconstruction ------------------------------
+    fitterName_ = iConfig.getParameter<string>("Fitter");   
+    propagatorName_ = iConfig.getParameter<string>("Propagator");
+    builderName_ = iConfig.getParameter<string>("TTRHBuilder");   
+    
+    
+    // initialize geometry parameters
+    //  PFGeometry pfGeometry;
+  }
   
-
-  // initialize track reconstruction ------------------------------
-  fitterName_ = iConfig.getParameter<string>("Fitter");   
-  propagatorName_ = iConfig.getParameter<string>("Propagator");
-  builderName_ = iConfig.getParameter<string>("TTRHBuilder");   
-
   vertexGenerator_ = iConfig.getParameter<ParameterSet>
     ( "VertexGenerator" );   
   particleFilter_ = iConfig.getParameter<ParameterSet>
     ( "ParticleFilter" );   
-
-  // initialize geometry parameters
-  PFGeometry pfGeometry;
   
-
   mySimEvent =  new FSimEvent( particleFilter_ );
 }
 
 
 
-PFTrackProducer::~PFTrackProducer() 
+PFSimParticleProducer::~PFSimParticleProducer() 
 { 
   delete mySimEvent; 
 }
 
 
 void 
-PFTrackProducer::beginJob(const edm::EventSetup & es)
+PFSimParticleProducer::beginJob(const edm::EventSetup & es)
 {
   
   // init Particle data table (from Pythia)
   edm::ESHandle < HepPDT::ParticleDataTable > pdt;
+  //  edm::ESHandle < DefaultConfig::ParticleDataTable > pdt;
   es.getData(pdt);
   if ( !ParticleTable::instance() ) ParticleTable::instance(&(*pdt));
   mySimEvent->initializePdt(&(*pdt));
 }
 
 
-void PFTrackProducer::produce(Event& iEvent, 
+void PFSimParticleProducer::produce(Event& iEvent, 
 			 const EventSetup& iSetup) 
 {
   
-  LogDebug("PFTrackProducer")<<"START event: "<<iEvent.id().event()
+  LogDebug("PFSimParticleProducer")<<"START event: "<<iEvent.id().event()
 			<<" in run "<<iEvent.id().run()<<endl;
   
   
@@ -295,17 +300,17 @@ void PFTrackProducer::produce(Event& iEvent,
       iEvent.put(pOutputPFSimParticleCollection);
     }
     catch(cms::Exception& err) { 
-      LogError("PFTrackProducer")<<err.what()<<endl;
+      LogError("PFSimParticleProducer")<<err.what()<<endl;
     }
   }
 
-  LogDebug("PFTrackProducer")<<"STOP event: "<<iEvent.id().event()
+  LogDebug("PFSimParticleProducer")<<"STOP event: "<<iEvent.id().event()
 			<<" in run "<<iEvent.id().run()<<endl;
 }
 
 
 void 
-PFTrackProducer::processRecTracks(auto_ptr< reco::PFRecTrackCollection >& 
+PFSimParticleProducer::processRecTracks(auto_ptr< reco::PFRecTrackCollection >& 
 			     trackCollection, 
 			     Event& iEvent, 
 			     const EventSetup& iSetup) {
@@ -317,24 +322,24 @@ PFTrackProducer::processRecTracks(auto_ptr< reco::PFRecTrackCollection >&
     ESHandle<Propagator> thePropagator;
     ESHandle<TransientTrackingRecHitBuilder> theBuilder;
     try {
-      LogDebug("PFTrackProducer")<<"get tracker geometry"<<endl;
+      LogDebug("PFSimParticleProducer")<<"get tracker geometry"<<endl;
       iSetup.get<TrackerDigiGeometryRecord>().get(theG);
 
-      LogDebug("PFTrackProducer")<<"get magnetic field"<<endl;
+      LogDebug("PFSimParticleProducer")<<"get magnetic field"<<endl;
       iSetup.get<IdealMagneticFieldRecord>().get(theMF);
       
-      LogDebug("PFTrackProducer")<<"get the trajectory fitter from the ES"<<endl;
+      LogDebug("PFSimParticleProducer")<<"get the trajectory fitter from the ES"<<endl;
       iSetup.get<TrackingComponentsRecord>().get(fitterName_, theFitter);
       
-      LogDebug("PFTrackProducer")<<"get the trajectory propagator from the ES"<<endl;
+      LogDebug("PFSimParticleProducer")<<"get the trajectory propagator from the ES"<<endl;
       iSetup.get<TrackingComponentsRecord>().get(propagatorName_, thePropagator);
       
-      LogDebug("PFTrackProducer")<<"get the TransientTrackingRecHitBuilder"<<endl;
+      LogDebug("PFSimParticleProducer")<<"get the TransientTrackingRecHitBuilder"<<endl;
       iSetup.get<TransientRecHitRecord>().get(builderName_, theBuilder);
     }
     catch( exception& err ) {
-      LogError("PFTrackProducer")
-	<<"PFTrackProducer::processRecTracks : exception: "
+      LogError("PFSimParticleProducer")
+	<<"PFSimParticleProducer::processRecTracks : exception: "
 	<<err.what()<<"\n"
 	<<"Processing of tracks skipped for this event.\n"
 	<<"Note that it might not be a problem for you,\n"
@@ -360,14 +365,14 @@ PFTrackProducer::processRecTracks(auto_ptr< reco::PFRecTrackCollection >&
     // will become persistent.
     AlgoProductCollection algoResults;
     try{
-      LogDebug("PFTrackProducer")<<"get the TrackCandidateCollection"
+      LogDebug("PFSimParticleProducer")<<"get the TrackCandidateCollection"
 			    <<" from the event, source is " 
 			    <<recTrackModuleLabel_ <<endl;
       Handle<TrackCandidateCollection> theTCCollection;
       iEvent.getByLabel(recTrackModuleLabel_, theTCCollection);
 
       //run the algorithm  
-      LogDebug("PFTrackProducer")<<"run the tracking algorithm"<<endl;
+      LogDebug("PFSimParticleProducer")<<"run the tracking algorithm"<<endl;
       trackAlgo_.runWithCandidate(theG.product(), theMF.product(), 
 				  *theTCCollection,
 				  theFitter.product(), thePropagator.product(),
@@ -377,7 +382,7 @@ PFTrackProducer::processRecTracks(auto_ptr< reco::PFRecTrackCollection >&
       assert( algoResults.size() == theTCCollection->size() );
 
     } catch (cms::Exception& e) { 
-      LogError("PFTrackProducer")<<"cms::Exception caught : " 
+      LogError("PFSimParticleProducer")<<"cms::Exception caught : " 
 			    << "cannot get collection " 
 			    << recTrackModuleLabel_<<endl<<e<<endl;
     }
@@ -403,7 +408,7 @@ PFTrackProducer::processRecTracks(auto_ptr< reco::PFRecTrackCollection >&
 		  reco::PFTrajectoryPoint::ClosestApproach,
 		  posClosest, momClosest);
       track.addPoint(closestPt);
-      LogDebug("PFTrackProducer")<<"closest approach point "<<closestPt<<endl;
+      LogDebug("PFSimParticleProducer")<<"closest approach point "<<closestPt<<endl;
     
       if (posClosest.Rho() < PFGeometry::innerRadius(PFGeometry::BeamPipe)) {
 	// Intersection with beam pipe
@@ -438,7 +443,7 @@ PFTrackProducer::processRecTracks(auto_ptr< reco::PFRecTrackCollection >&
 					   posBeamPipe, momBeamPipe);
 	
 	track.addPoint(beamPipePt);
-	LogDebug("PFTrackProducer")<<"beam pipe point "<<beamPipePt<<endl;
+	LogDebug("PFSimParticleProducer")<<"beam pipe point "<<beamPipePt<<endl;
       }
 
       // Loop over trajectory measurements
@@ -464,7 +469,7 @@ PFTrackProducer::processRecTracks(auto_ptr< reco::PFRecTrackCollection >&
 	reco::PFTrajectoryPoint trajPt(detId, -1, 
 				       pos, mom);
 	track.addPoint(trajPt);
-	LogDebug("PFTrackProducer")<<"add measuremnt "<<iTraj<<" "<<trajPt<<endl;
+	LogDebug("PFSimParticleProducer")<<"add measuremnt "<<iTraj<<" "<<trajPt<<endl;
       }
 
       // Propagate track to ECAL entrance
@@ -511,7 +516,7 @@ PFTrackProducer::processRecTracks(auto_ptr< reco::PFRecTrackCollection >&
 	  reco::PFTrajectoryPoint ps1Pt(-1, reco::PFTrajectoryPoint::PS1, 
 					posPS1, momPS1);
 	  track.addPoint(ps1Pt);
-	  LogDebug("PFTrackProducer")<<"ps1 point "<<ps1Pt<<endl;
+	  LogDebug("PFSimParticleProducer")<<"ps1 point "<<ps1Pt<<endl;
 	} else {
 	  reco::PFTrajectoryPoint dummyPS1;
 	  track.addPoint(dummyPS1);
@@ -537,7 +542,7 @@ PFTrackProducer::processRecTracks(auto_ptr< reco::PFRecTrackCollection >&
 	  reco::PFTrajectoryPoint ps2Pt(-1, reco::PFTrajectoryPoint::PS2, 
 					posPS2, momPS2);
 	  track.addPoint(ps2Pt);
-	  LogDebug("PFTrackProducer")<<"ps2 point "<<ps2Pt<<endl;
+	  LogDebug("PFSimParticleProducer")<<"ps2 point "<<ps2Pt<<endl;
 	} else {
 	  reco::PFTrajectoryPoint dummyPS2;
 	  track.addPoint(dummyPS2);
@@ -550,7 +555,7 @@ PFTrackProducer::processRecTracks(auto_ptr< reco::PFRecTrackCollection >&
 	track.addPoint(dummyPS2);
       }
       track.addPoint(ecalPt);
-      LogDebug("PFTrackProducer")<<"ecal point "<<ecalPt<<endl;
+      LogDebug("PFSimParticleProducer")<<"ecal point "<<ecalPt<<endl;
 
       // Propage track to ECAL shower max TODO
       // Be careful : the following formula are only valid for electrons !
@@ -593,7 +598,7 @@ PFTrackProducer::processRecTracks(auto_ptr< reco::PFRecTrackCollection >&
 				      reco::PFTrajectoryPoint::ECALShowerMax, 
 				      posShowerMax, momShowerMax);
       track.addPoint(eSMaxPt);
-      LogDebug("PFTrackProducer")<<"ecal shower maximum point "<<eSMaxPt 
+      LogDebug("PFSimParticleProducer")<<"ecal shower maximum point "<<eSMaxPt 
 			    <<endl;    
     
       // Propagate track to HCAL entrance
@@ -616,7 +621,7 @@ PFTrackProducer::processRecTracks(auto_ptr< reco::PFRecTrackCollection >&
 				       reco::PFTrajectoryPoint::HCALEntrance, 
 				       posHCAL, momHCAL);
 	track.addPoint(hcalPt);
-	LogDebug("PFTrackProducer")<<"hcal point "<<hcalPt<<endl;    
+	LogDebug("PFSimParticleProducer")<<"hcal point "<<hcalPt<<endl;    
 
 	// Propagate track to HCAL exit
 	// 	TrajectoryStateOnSurface hcalExitTSOS = 
@@ -629,23 +634,23 @@ PFTrackProducer::processRecTracks(auto_ptr< reco::PFRecTrackCollection >&
 	// 	reco::PFTrajectoryPoint hcalExitPt(0, reco::PFTrajectoryPoint::HCALExit, 
 	// 					   posHCALExit, momHCALExit);
 	// 	track.addPoint(hcalExitPt);
-	// 	LogDebug("PFTrackProducer")<<"hcal exit point "<<hcalExitPt<<endl;    
+	// 	LogDebug("PFSimParticleProducer")<<"hcal exit point "<<hcalExitPt<<endl;    
       }
       catch( exception& err) {
-	LogError("PFTrackProducer")<<"Exception : "<<err.what()<<endl;
+	LogError("PFSimParticleProducer")<<"Exception : "<<err.what()<<endl;
 	throw err; 
       }
 
 
       trackCollection->push_back(track);
-      LogDebug("PFTrackProducer")<<"PFRecTrack added to event"<<track<<endl;
+      LogDebug("PFSimParticleProducer")<<"PFRecTrack added to event"<<track<<endl;
     }   
 }
 
 
 
 TrajectoryStateOnSurface 
-PFTrackProducer::getStateOnSurface( PFGeometry::Surface_t iSurf, 
+PFSimParticleProducer::getStateOnSurface( PFGeometry::Surface_t iSurf, 
 			       const TrajectoryStateOnSurface& tsos, 
 			       const Propagator& propagator, int& side) {
 
@@ -681,7 +686,7 @@ PFTrackProducer::getStateOnSurface( PFGeometry::Surface_t iSurf,
   }
 
   if( !finalTSOS.isValid() ) {
-    LogError("PFTrackProducer")<<"invalid trajectory state on surface: "
+    LogError("PFSimParticleProducer")<<"invalid trajectory state on surface: "
 			  <<" iSurf = "<<iSurf
 			  <<" tan theta = "<<p.perp()/p.z()
 			  <<" pz = "<<p.z()

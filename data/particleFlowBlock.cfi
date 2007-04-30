@@ -5,7 +5,8 @@ module particleFlowBlock = PFBlockProducer {
     # input collections ----------------------------------------
 
     # module label to find input rec tracks 
-    untracked string RecTrackModuleLabel = "particleFlowTrack"
+
+    untracked string RecTrackModuleLabel = "elecpreid"
 
     # module label to find input PFClusters
     untracked string PFClusterModuleLabel = "particleFlowCluster"
@@ -25,10 +26,10 @@ module particleFlowBlock = PFBlockProducer {
     # int32   pf_recon_method = 3
 
     # resolution maps
-    string  pf_resolution_map_ECAL_eta = "../data/resmap_ECAL_eta.dat"
-    string  pf_resolution_map_ECAL_phi = "../data/resmap_ECAL_phi.dat"
-    string  pf_resolution_map_HCAL_eta = "../data/resmap_HCAL_eta.dat"
-    string  pf_resolution_map_HCAL_phi = "../data/resmap_HCAL_phi.dat"
+    string  pf_resolution_map_ECAL_eta = "RecoParticleFlow/PFBlockProducer/data/resmap_ECAL_eta.dat"
+    string  pf_resolution_map_ECAL_phi = "RecoParticleFlow/PFBlockProducer/data/resmap_ECAL_phi.dat"
+    string  pf_resolution_map_HCAL_eta = "RecoParticleFlow/PFBlockProducer/data/resmap_HCAL_eta.dat"
+    string  pf_resolution_map_HCAL_phi = "RecoParticleFlow/PFBlockProducer/data/resmap_HCAL_phi.dat"
     
     # max chi2 for ECAL/HCAL associations
     double  pf_chi2_ECAL_HCAL  = 10

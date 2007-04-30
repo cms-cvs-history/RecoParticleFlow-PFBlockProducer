@@ -1,5 +1,5 @@
 
-module particleFlowTrack = PFTrackProducer {
+module particleFlowSimParticle = PFSimParticleProducer {
 
     # necessary to access true particles 
     include "FastSimulation/Event/data/NoVertexGenerator.cfi"
@@ -15,7 +15,7 @@ module particleFlowTrack = PFTrackProducer {
     # replace ParticleFilter.pTMin = 0.5
 
     # flags 
-    untracked bool process_RecTracks = true
+    untracked bool process_RecTracks = false
     untracked bool process_Particles = true
 
     # Tracking parameters

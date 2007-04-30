@@ -1,5 +1,5 @@
-#ifndef RecoParticleFlow_PFTrackProducer_h_
-#define RecoParticleFlow_PFTrackProducer_h_
+#ifndef RecoParticleFlow_PFSimParticleProducer_h_
+#define RecoParticleFlow_PFSimParticleProducer_h_
 
 // system include files
 #include <memory>
@@ -23,22 +23,24 @@
 #include "RecoParticleFlow/PFBlockAlgo/interface/PFBlockAlgo.h"
 
 
-/**\class PFTrackProducer 
+/**\class PFSimParticleProducer 
 \brief Producer for PFRecTracks and PFSimParticles
-\author Renaud Bruneliere
-\date   July 2006
+
+\todo Remove the PFRecTrack part, which is now handled by PFTracking
+\author Colin Bernet
+\date   April 2007
 */
 
 class FSimEvent;
 
 
 
-class PFTrackProducer : public edm::EDProducer {
+class PFSimParticleProducer : public edm::EDProducer {
  public:
 
-  explicit PFTrackProducer(const edm::ParameterSet&);
+  explicit PFSimParticleProducer(const edm::ParameterSet&);
 
-  ~PFTrackProducer();
+  ~PFSimParticleProducer();
   
   virtual void produce(edm::Event&, const edm::EventSetup&);
 
@@ -47,9 +49,9 @@ class PFTrackProducer : public edm::EDProducer {
  private:
 
   /// process reconstructed tracks 
-  void processRecTracks(std::auto_ptr< reco::PFRecTrackCollection >& 
-			trackCollection, 
-			edm::Event& iEvent, 
+  void processRecTracks(std::auto_ptr< reco::PFRecTrackCollection >&
+			trackCollection,
+			edm::Event& iEvent,
 			const edm::EventSetup& iSetup);
     
     

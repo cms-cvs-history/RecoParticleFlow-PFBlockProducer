@@ -19,6 +19,9 @@
 #include "FWCore/Utilities/interface/Exception.h"
 #include "FWCore/Framework/interface/EventSetup.h"
 
+
+#include "FWCore/ParameterSet/interface/FileInPath.h"
+
 #include <set>
 
 using namespace std;
@@ -83,15 +86,21 @@ PFBlockProducer::PFBlockProducer(const edm::ParameterSet& iConfig) {
 //     = iConfig.getParameter<double>("pf_chi2_PS_Track");  
 
 
+
   //energyCalibration_ = new PFEnergyCalibration(iConfig);
 
   
   //   PFBlock::setEnergyResolution(energyResolution_);
-  
-  pfBlockAlgo_.setParameters( map_ECAL_eta.c_str(),
-			      map_ECAL_phi.c_str(),
-			      map_HCAL_eta.c_str(),
-			      map_HCAL_phi.c_str(),
+
+  edm::FileInPath path_ECAL_eta( map_ECAL_eta.c_str() );
+  edm::FileInPath path_ECAL_phi( map_ECAL_phi.c_str() );
+  edm::FileInPath path_HCAL_eta( map_HCAL_eta.c_str() );
+  edm::FileInPath path_HCAL_phi( map_HCAL_phi.c_str() );
+   
+  pfBlockAlgo_.setParameters( path_ECAL_eta.fullPath().c_str(),
+			      path_ECAL_phi.fullPath().c_str(),
+			      path_HCAL_eta.fullPath().c_str(),
+			      path_HCAL_phi.fullPath().c_str(),
 			      chi2_ECAL_Track,
 			      chi2_HCAL_Track,
 			      chi2_ECAL_HCAL );
@@ -117,9 +126,9 @@ PFBlockProducer::PFBlockProducer(const edm::ParameterSet& iConfig) {
 PFBlockProducer::~PFBlockProducer() { }
 
 
-void 
-PFBlockProducer::beginJob(const edm::EventSetup & es)
-{}
+
+void PFBlockProducer::beginJob(const edm::EventSetup & es) { }
+
 
 void PFBlockProducer::produce(Event& iEvent, 
 			 const EventSetup& iSetup) {
@@ -177,8 +186,7 @@ void PFBlockProducer::produce(Event& iEvent,
 			       <<endl;
   }
     
-
-
+    
   //     Handle< reco::PFClusterCollection > clustersPS;
   //     try{      
   //       LogDebug("PFBlockProducer")<<"get PS clusters"<<endl;
@@ -205,11 +213,9 @@ void PFBlockProducer::produce(Event& iEvent,
   auto_ptr< reco::PFBlockCollection > 
     pOutputBlockCollection( pfBlockAlgo_.transferBlocks() ); 
 
-  reco::PFBlock block( (*pOutputBlockCollection)[0] );
-    
 
   iEvent.put(pOutputBlockCollection);
 
   LogDebug("PFBlockProducer")<<"STOP event: "<<iEvent.id().event()
-			<<" in run "<<iEvent.id().run()<<endl;
+			     <<" in run "<<iEvent.id().run()<<endl;
 }
