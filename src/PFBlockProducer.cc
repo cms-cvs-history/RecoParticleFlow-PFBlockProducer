@@ -119,11 +119,13 @@ PFBlockProducer::PFBlockProducer(const edm::ParameterSet& iConfig) {
 
 //   energyResolution_ = new PFEnergyResolution();
 
+
 }
 
 
 
 PFBlockProducer::~PFBlockProducer() { }
+
 
 
 
@@ -186,7 +188,9 @@ void PFBlockProducer::produce(Event& iEvent,
 			       <<endl;
   }
     
-    
+
+
+
   //     Handle< reco::PFClusterCollection > clustersPS;
   //     try{      
   //       LogDebug("PFBlockProducer")<<"get PS clusters"<<endl;
@@ -212,6 +216,7 @@ void PFBlockProducer::produce(Event& iEvent,
 
   auto_ptr< reco::PFBlockCollection > 
     pOutputBlockCollection( pfBlockAlgo_.transferBlocks() ); 
+
 
 
   iEvent.put(pOutputBlockCollection);
