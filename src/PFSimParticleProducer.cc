@@ -178,10 +178,10 @@ void PFSimParticleProducer::produce(Event& iEvent,
       //     cout<<"ntracks   = "<<mySimEvent->nTracks()<<endl;
       //     cout<<"ngenparts = "<<mySimEvent->nGenParts()<<endl;
 
-      const std::vector<FSimTrack>& fsimTracks = *(mySimEvent->tracks() );
-      for(unsigned i=0; i<fsimTracks.size(); i++) {
+      // const std::vector<FSimTrack>& fsimTracks = *(mySimEvent->tracks() );
+      for(unsigned i=0; i<mySimEvent->nTracks(); i++) {
     
-	const FSimTrack& fst = fsimTracks[i];
+	const FSimTrack& fst = mySimEvent->track(i);
 
 	int motherId = -1;
 	if( ! fst.noMother() ) 
