@@ -31,5 +31,8 @@ module particleFlowSimParticle = PFSimParticleProducer {
     # module label to find input sim tracks and sim vertices
     untracked string SimModuleLabel            = "g4SimHits"
 
+    # verbosity 
+    untracked bool   verbose            = false
+
 }
 
