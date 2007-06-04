@@ -19,6 +19,10 @@ module particleFlowBlock = PFBlockProducer {
     
     # instance name to find ecal PFClusters
     untracked string PFClusterPSInstanceName = "PS"
+
+    # verbosity 
+    untracked bool   verbose            = false
+
     
    # particle flow parameters ---------------------------------
 

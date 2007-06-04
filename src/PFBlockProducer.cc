@@ -51,6 +51,12 @@ PFBlockProducer::PFBlockProducer(const edm::ParameterSet& iConfig) {
     = iConfig.getUntrackedParameter<string>
     ("PFClusterPSInstanceName","PS");  
 
+
+  verbose_ = 
+    iConfig.getUntrackedParameter<bool>("verbose",false);
+
+
+
   produces<reco::PFBlockCollection>();
   
 
@@ -209,14 +215,15 @@ void PFBlockProducer::produce(Event& iEvent,
 			 clustersECAL,
 			 clustersHCAL );
   pfBlockAlgo_.findBlocks();
-      
-  ostringstream  str;
-  str<<pfBlockAlgo_<<endl;
-  LogInfo("PFBlockProducer") << str.str()<<endl;
-
+   
+  if(verbose_) {
+    ostringstream  str;
+    str<<pfBlockAlgo_<<endl;
+    LogInfo("PFBlockProducer") << str.str()<<endl;
+  }    
+  
   auto_ptr< reco::PFBlockCollection > 
     pOutputBlockCollection( pfBlockAlgo_.transferBlocks() ); 
-
 
 
   iEvent.put(pOutputBlockCollection);
