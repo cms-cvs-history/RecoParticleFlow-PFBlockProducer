@@ -134,7 +134,6 @@ PFBlockProducer::~PFBlockProducer() { }
 
 
 
-
 void PFBlockProducer::beginJob(const edm::EventSetup & es) { }
 
 
