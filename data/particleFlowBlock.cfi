@@ -34,14 +34,18 @@ module particleFlowBlock = PFBlockProducer {
     string  pf_resolution_map_ECAL_phi = "RecoParticleFlow/PFBlockProducer/data/resmap_ECAL_phi.dat"
     string  pf_resolution_map_HCAL_eta = "RecoParticleFlow/PFBlockProducer/data/resmap_HCAL_eta.dat"
     string  pf_resolution_map_HCAL_phi = "RecoParticleFlow/PFBlockProducer/data/resmap_HCAL_phi.dat"
+   
+    # Track Quality Cut: Tracks are kept if DPt/Pt < Cut
+    double pf_DPtoverPt_Cut    = 999.9
     
-    # max chi2 for ECAL/HCAL associations
+    # max chi2 for element associations in PFBlocks
     double  pf_chi2_ECAL_HCAL  = 10
-    double  pf_chi2_ECAL_PS    = 0
-    double  pf_chi2_HCAL_PS    = 0
+    double  pf_chi2_ECAL_PS    = 100
+    # double  pf_chi2_HCAL_PS    = 0
     double  pf_chi2_ECAL_Track = 50
     double  pf_chi2_HCAL_Track = 50
-    double  pf_chi2_PS_Track   = 0
+    double  pf_chi2_PS_Track   = 100
+    double  pf_chi2_PSH_PSV    = 5
     
 }
 
