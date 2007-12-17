@@ -2,6 +2,9 @@ module  tauHadronDecayFilter  = TauHadronDecayFilter {
 
     # necessary to access true particles 
     # using FastSimulation/Event
+
+    InputTag particles = particleFlowBlock
+
     include "FastSimulation/Event/data/NoVertexGenerator.cfi"
     PSet ParticleFilter = {
 	# Particles with |eta| > etaMax (momentum direction at primary vertex)

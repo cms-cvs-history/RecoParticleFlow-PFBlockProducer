@@ -4,22 +4,15 @@ module particleFlowBlock = PFBlockProducer {
 
     # input collections ----------------------------------------
 
-    # module label to find input rec tracks 
-
-    untracked string RecTrackModuleLabel = "elecpreid"
+    # module label to find input rec tracks
+    InputTag RecTracks = "elecpreid"
 
     # module label to find input PFClusters
-    untracked string PFClusterModuleLabel = "particleFlowCluster"
+    InputTag PFClustersECAL = particleFlowCluster:ECAL
+    InputTag PFClustersHCAL = particleFlowCluster:HCAL
+    InputTag PFClustersPS = particleFlowCluster:PS
     
-    # instance name to find ecal PFClusters
-    untracked string PFClusterECALInstanceName = "ECAL"
-    
-    # instance name to find ecal PFClusters
-    untracked string PFClusterHCALInstanceName = "HCAL"
-    
-    # instance name to find ecal PFClusters
-    untracked string PFClusterPSInstanceName = "PS"
-
+ 
     # verbosity 
     untracked bool   verbose            = false
 

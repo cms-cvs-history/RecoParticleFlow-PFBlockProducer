@@ -26,14 +26,12 @@ module particleFlowSimParticle = PFSimParticleProducer {
 
     # input collections ----------------------------------------
 
-    # module label to find input rec tracks 
-    untracked string RecTrackModuleLabel = "ckfTrackCandidates"
 
     # module label to find input sim tracks and sim vertices
-    untracked string SimModuleLabel            = "g4SimHits"
+    InputTag         sim = g4SimHits
 
     # verbosity 
-    untracked bool   verbose            = false
+    untracked bool   verbose = false
 
 }
 
