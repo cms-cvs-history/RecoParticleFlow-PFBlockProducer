@@ -6,6 +6,7 @@ module particleFlowBlock = PFBlockProducer {
 
     # module label to find input rec tracks
     InputTag RecTracks = "elecpreid"
+    InputTag PFNuclear = "pfNuclear"
 
     # module label to find input PFClusters
     InputTag PFClustersECAL = particleFlowCluster:ECAL
@@ -13,6 +14,8 @@ module particleFlowBlock = PFBlockProducer {
     InputTag PFClustersPS = particleFlowCluster:PS
     
  
+    untracked bool   useNuclear         = false
+
     # verbosity 
     untracked bool   verbose            = false
 
