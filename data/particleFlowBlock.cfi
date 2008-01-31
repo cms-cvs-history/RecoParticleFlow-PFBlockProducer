@@ -18,6 +18,7 @@ module particleFlowBlock = PFBlockProducer {
 
     # verbosity 
     untracked bool   verbose            = false
+    untracked bool   debug              = false
 
     
    # particle flow parameters ---------------------------------
