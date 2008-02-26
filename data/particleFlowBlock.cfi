@@ -9,9 +9,9 @@ module particleFlowBlock = PFBlockProducer {
     InputTag PFNuclear = "pfNuclear"
 
     # module label to find input PFClusters
-    InputTag PFClustersECAL = particleFlowCluster:ECAL
-    InputTag PFClustersHCAL = particleFlowCluster:HCAL
-    InputTag PFClustersPS = particleFlowCluster:PS
+    InputTag PFClustersECAL = particleFlowClusterECAL
+    InputTag PFClustersHCAL = particleFlowClusterHCAL
+    InputTag PFClustersPS = particleFlowClusterPS
     
  
     untracked bool   useNuclear         = false
