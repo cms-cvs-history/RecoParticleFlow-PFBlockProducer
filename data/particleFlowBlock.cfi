@@ -6,7 +6,6 @@ module particleFlowBlock = PFBlockProducer {
 
     # module label to find input rec tracks
     InputTag RecTracks = "elecpreid"
-    InputTag RecMuons = muons
     InputTag PFNuclear = "pfNuclear"
 
     # module label to find input PFClusters
