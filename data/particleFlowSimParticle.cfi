@@ -1,8 +1,9 @@
+include "FastSimulation/Event/data/NoVertexGenerator.cfi"
 
 module particleFlowSimParticle = PFSimParticleProducer {
 
     # necessary to access true particles 
-    include "FastSimulation/Event/data/NoVertexGenerator.cfi"
+    using NoVertexGeneratorBlock
     PSet ParticleFilter = {
 	# Particles with |eta| > etaMax (momentum direction at primary vertex) 
 	# are not simulated 
