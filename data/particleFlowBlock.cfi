@@ -17,8 +17,8 @@ module particleFlowBlock = PFBlockProducer {
     InputTag PFClustersPS = particleFlowClusterPS
     
  
-    untracked bool   useNuclear         = false
-    untracked bool   useConversions     = false
+    tracked bool   useNuclear         = false
+    tracked bool   useConversions     = false
 
     # verbosity 
     untracked bool   verbose            = false
