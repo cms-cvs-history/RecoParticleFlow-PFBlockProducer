@@ -6,10 +6,7 @@ module particleFlowBlock = PFBlockProducer {
 
     # module label to find input rec tracks
     InputTag RecTracks = "elecpreid"
-    InputTag GsfRecTracks = "pfTrackElec"
-    InputTag RecMuons = muons
     InputTag PFNuclear = "pfNuclear"
-    InputTag PFConversions = "pfConversions"
 
     # module label to find input PFClusters
     InputTag PFClustersECAL = particleFlowClusterECAL
@@ -17,12 +14,12 @@ module particleFlowBlock = PFBlockProducer {
     InputTag PFClustersPS = particleFlowClusterPS
     
  
-    bool   useNuclear         = false
-    bool   useConversions     = false
+    untracked bool   useNuclear         = false
 
     # verbosity 
     untracked bool   verbose            = false
     untracked bool   debug              = false
+
     
    # particle flow parameters ---------------------------------
 

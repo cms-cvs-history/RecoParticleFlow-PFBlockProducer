@@ -10,9 +10,6 @@
 #include "DataFormats/ParticleFlowReco/interface/PFCluster.h"
 #include "DataFormats/ParticleFlowReco/interface/PFRecTrack.h"
 #include "DataFormats/ParticleFlowReco/interface/PFNuclearInteraction.h"
-#include "DataFormats/ParticleFlowReco/interface/PFConversionFwd.h"
-#include "DataFormats/ParticleFlowReco/interface/PFConversion.h"
-
 
 #include "DataFormats/ParticleFlowReco/interface/PFBlock.h"
 #include "DataFormats/ParticleFlowReco/interface/PFBlockFwd.h"
@@ -23,7 +20,6 @@
 #include "FWCore/Utilities/interface/Exception.h"
 #include "FWCore/Framework/interface/EventSetup.h"
 
-#include "DataFormats/MuonReco/interface/MuonFwd.h"
 
 #include "FWCore/ParameterSet/interface/FileInPath.h"
 
@@ -39,18 +35,8 @@ PFBlockProducer::PFBlockProducer(const edm::ParameterSet& iConfig) {
   inputTagRecTracks_ 
     = iConfig.getParameter<InputTag>("RecTracks");
 
-  inputTagGsfRecTracks_ 
-    = iConfig.getParameter<InputTag>("GsfRecTracks");
-
-  inputTagRecMuons_ 
-    = iConfig.getParameter<InputTag>("RecMuons");
-
   inputTagPFNuclear_ 
     = iConfig.getParameter<InputTag>("PFNuclear");
-
-  inputTagPFConversions_ 
-    = iConfig.getParameter<InputTag>("PFConversions");
-
 
   inputTagPFClustersECAL_ 
     = iConfig.getParameter<InputTag>("PFClustersECAL");
@@ -69,9 +55,9 @@ PFBlockProducer::PFBlockProducer(const edm::ParameterSet& iConfig) {
   bool debug_ = 
     iConfig.getUntrackedParameter<bool>("debug",false);
 
-  useNuclear_ = iConfig.getParameter<bool>("useNuclear");
+  useNuclear_ =
+     iConfig.getUntrackedParameter<bool>("useNuclear",false);
 
-  useConversions_ = iConfig.getParameter<bool>("useConversions");
 
   produces<reco::PFBlockCollection>();
   
@@ -172,67 +158,28 @@ void PFBlockProducer::produce(Event& iEvent,
 			     <<" in run "<<iEvent.id().run()<<endl;
   
   
+  
   // get rectracks
   
   Handle< reco::PFRecTrackCollection > recTracks;
   
-  // LogDebug("PFBlockProducer")<<"get reco tracks"<<endl;
+  // LogDebug("PFBlockProducer")<<"get HCAL clusters"<<endl;
   bool found = iEvent.getByLabel(inputTagRecTracks_, recTracks);
     
   if(!found )
     LogError("PFBlockProducer")<<" cannot get rectracks: "
 			       <<inputTagRecTracks_<<endl;
-
-
-
-  // get GsfTracks 
-  Handle< reco::GsfPFRecTrackCollection > GsfrecTracks;
-  found = iEvent.getByLabel(inputTagGsfRecTracks_,GsfrecTracks);
-  if(!found )
-    LogError("PFBlockProducer")<<" cannot get Gsfrectracks: "
-			       << inputTagGsfRecTracks_ <<endl;
- 
-  // get recmuons
-
-  Handle< reco::MuonCollection > recMuons;
-
-  // LogDebug("PFBlockProducer")<<"get reco muons"<<endl;
-  found = iEvent.getByLabel(inputTagRecMuons_, recMuons);
   
-  //if(!found )
-  //  LogError("PFBlockProducer")<<" cannot get recmuons: "
-  //			       <<inputTagRecMuons_<<endl;
-
-
   // get PFNuclearInteractions
 
   Handle< reco::PFNuclearInteractionCollection > pfNuclears;
   if( useNuclear_ ) {
     found = iEvent.getByLabel(inputTagPFNuclear_, pfNuclears);
 
-
     if(!found )
       LogError("PFBlockProducer")<<" cannot get PFNuclearInteractions : "
                                <<inputTagPFNuclear_<<endl;
   }
-
-
-
- 
-  // get conversions
-  Handle< reco::PFConversionCollection > pfConversions;
-  if( useConversions_ ) {
-    found = iEvent.getByLabel(inputTagPFConversions_, pfConversions);
-    
-    if(!found )
-      LogError("PFBlockProducer")<<" cannot get PFConversions : "
-				 <<inputTagPFConversions_<<endl;
-  }
-  
-
-
-
-
   
   // get ECAL, HCAL and PS clusters
   
@@ -265,10 +212,7 @@ void PFBlockProducer::produce(Event& iEvent,
   
   
   pfBlockAlgo_.setInput( recTracks, 
-			 GsfrecTracks,
-			 recMuons, 
                          pfNuclears,
-                         pfConversions,
 			 clustersECAL,
 			 clustersHCAL,
 			 clustersPS );
