@@ -10,7 +10,7 @@ particleFlowBlock = cms.EDProducer("PFBlockProducer",
                                    
     # max chi2 for element associations in PFBlocks
     pf_chi2_ECAL_Track = cms.double(100.0),
-    pf_chi2_HCAL_Track = cms.double(100.0),
+    pf_chi2_HCAL_Track = cms.double(10.0),
     pf_chi2_PS_Track = cms.double(100.0),
     pf_chi2_ECAL_HCAL = cms.double(10.0),
     pf_chi2_PSH_PSV = cms.double(5.0),
