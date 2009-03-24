@@ -29,7 +29,7 @@ particleFlowBlock = cms.EDProducer("PFBlockProducer",
 
     # input tracks
     GsfRecTracks = cms.InputTag("pfTrackElec"),
-    RecTracks = cms.InputTag("trackerDrivenElectronSeeds"),
+    RecTracks = cms.InputTag("elecpreid"),
 
     # input nuclear interactions 
     PFNuclear = cms.InputTag("pfNuclear"),
